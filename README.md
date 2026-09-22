@@ -1,5 +1,5 @@
 ![workflow](https://github.com/olszczepanski612/sem/actions/workflows/main.yml/badge.svg)
-[![LICENSE](https://img.shields.io/github/license/olszczepanski612/sem.svg?style=flat-square)](https://github.com/olszczepanski612/sem/blob/master/LICENSE)
+![LICENSE](https://img.shields.io/github/license/olszczepanski612/sem.svg?style=flat-square)](https://github.com/olszczepanski612/sem/blob/master/LICENSE)
 
 # DevOps
 ![GitHub Workflow Status (develop)](https://img.shields.io/github/workflow/status/olszczepanski612/sem/develop?style=flat-square)
