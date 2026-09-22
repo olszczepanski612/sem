@@ -18,11 +18,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Compile with Maven
-        working-directory: ./devops
         run: mvn compile
 
       - name: Build Docker Image
-        working-directory: ./devops
         run: docker build -t devopsimage .
 
       - name: Run image
