@@ -1,4 +1,4 @@
 FROM amazoncorretto:17
-COPY ./target/devops-1.0-SNAPSHOT-jar-with-dependencies.jar /tmp
+COPY ./target/devops-0.1.0.1-jar-with-dependencies.jar /tmp
 WORKDIR /tmp
-ENTRYPOINT ["java", "-jar", "devops-0.1.0.1-jar-with-dependencies"]
+ENTRYPOINT ["java", "-jar", "devops-0.1.0.1-jar-with-dependencies.jar"]
