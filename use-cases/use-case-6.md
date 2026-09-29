@@ -1,10 +1,10 @@
-# USE CASE: 4 Produce a Report on the Salary of Employees of a Given Role
+# USE CASE: 6 View an employee's details
 
 ## CHARACTERISTIC INFORMATION
 
 ### Goal in Context
 
-As an *HR advisor* I want *to produce a report on the salary of employees of a given role* so that *I can support financial reporting of the organisation.*
+As an HR advisor I want to view and employee's details so that the employee's promotion request can be supported.
 
 ### Scope
 
