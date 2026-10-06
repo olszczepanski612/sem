@@ -16,7 +16,7 @@ Primary task.
 
 ### Preconditions
 
-We know the role.  Database contains current employee salary data.
+We know the role. Database contains current employee salary data.
 
 ### Success End Condition
 
@@ -43,7 +43,7 @@ A request for finance information is sent to HR.
 
 ## EXTENSIONS
 
-3. **Role does not exist**:
+1. **Role does not exist**:
     1. HR advisor informs finance no role exists.
 
 ## SUB-VARIATIONS
