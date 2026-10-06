@@ -16,15 +16,15 @@ Primary task.
 
 ### Preconditions
 
-We know the role.  Database contains current employee salary data.
+We know what kind of details we want to add
 
 ### Success End Condition
 
-A report is available for HR to provide to finance.
+New employee details added
 
 ### Failed End Condition
 
-No report is produced.
+Details aren't added
 
 ### Primary Actor
 
@@ -32,19 +32,18 @@ HR Advisor.
 
 ### Trigger
 
-A request for finance information is sent to HR.
+Employee needs their details added
 
 ## MAIN SUCCESS SCENARIO
 
-1. Finance request salary information for a given role.
-2. HR advisor captures name of the role to get salary information for.
-3. HR advisor extracts current salary information of all employees of the given role.
-4. HR advisor provides report to finance.
+1. Request for employee details to be added
+2. HR Advisor captures details of the employee to add
+3. HR Advisor enters employee details into database
 
 ## EXTENSIONS
 
-3. **Role does not exist**:
-    1. HR advisor informs finance no role exists.
+1. **Details do not exist**:
+    1. HR advisor informs employee their details don't exist
 
 ## SUB-VARIATIONS
 

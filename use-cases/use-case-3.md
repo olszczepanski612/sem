@@ -16,7 +16,7 @@ Primary task.
 
 ### Preconditions
 
-We know the role.  Database contains current employee salary data.
+We know the department. Database contains employee and department
 
 ### Success End Condition
 
@@ -37,13 +37,12 @@ A request for finance information is sent to department manager.
 ## MAIN SUCCESS SCENARIO
 
 1. Finance request salary information for a given role.
-2. Department Manager captures name of the role to get salary information for.
-3. Department Manager extracts current salary information of all employees of the given role.
-4. Department Manager provides report to finance.
+2. Department Manager extracts salary information for employees in their department
+3. Department Manager provides report to finance.
 
 ## EXTENSIONS
 
-3. **Role does not exist**:
+1. **Role does not exist**:
     1. Department Manager informs finance no role exists.
 
 ## SUB-VARIATIONS
