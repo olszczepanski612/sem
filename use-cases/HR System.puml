@@ -11,6 +11,8 @@ rectangle "HR System" {
     usecase UC3 as "Produce salary report of my department"
     usecase UC4 as "Produce salary report by role"
     usecase UCa as "Print salaries"
+    usecase UCb as "Filter salaries"
+    usecase UCc as "Sort salaries"
     usecase UC5 as "View an employee's details"
     usecase UC6 as "Add an employee's details"
 }
@@ -25,7 +27,14 @@ HR --> UC6
 
 DM --> UC3
 
+UC1 ..> UCa : <<include>>
+UC1 ..> UCb : <<include>>
+UC2 ..> UCa : <<include>>
+UC2 ..> UCb : <<include>>
+UC3 ..> UCa : <<include>>
 UC4 ..> UCa : <<include>>
+UC4 ..> UCb : <<include>>
+UC4 ..> UCc : <<include>>
 
 UC1 -- DB
 UC2 -- DB
