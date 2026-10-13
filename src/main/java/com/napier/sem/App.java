@@ -37,14 +37,19 @@ public class App
                 System.out.println("Successfully connected");
                 break;
             }
-            catch (SQLException sqle)
+            catch (SQLException e)
             {
-                System.out.println("Failed to connect to database attempt " + Integer.toString(i));
-                System.out.println(sqle.getMessage());
-            }
-            catch (InterruptedException ie)
-            {
-                System.out.println("Thread interrupted? Should not happen.");
+                System.out.println("Failed to connect: " + e.getMessage());
+
+                try
+                {
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException ie)
+                {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
         }
     }
