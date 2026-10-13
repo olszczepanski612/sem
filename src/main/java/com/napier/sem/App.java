@@ -12,34 +12,38 @@ public class App
     /**
      * Connect to the MySQL database.
      */
-    public void connect()
+    public boolean connect()
     {
         try
         {
-            // Load Database driver
             Class.forName("com.mysql.cj.jdbc.Driver");
         }
         catch (ClassNotFoundException e)
         {
             System.out.println("Could not load SQL driver");
-            System.exit(-1);
+            return false;
         }
 
-        int retries = 10;
-        for (int i = 0; i < retries; ++i)
+        int retries = 60;
+
+        for (int i = 0; i < retries; i++)
         {
             System.out.println("Connecting to database...");
+
             try
             {
-                // Wait a bit for db to start
-                // Connect to database
-                con = DriverManager.getConnection("jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false", "root", "example");
+                con = DriverManager.getConnection(
+                        "jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false",
+                        "root",
+                        "example"
+                );
+
                 System.out.println("Successfully connected");
-                break;
+                return true;
             }
             catch (SQLException e)
             {
-                System.out.println("Failed to connect: " + e.getMessage());
+                System.out.println("Database not ready: " + e.getMessage());
 
                 try
                 {
@@ -48,10 +52,13 @@ public class App
                 catch (InterruptedException ie)
                 {
                     Thread.currentThread().interrupt();
-                    return;
+                    return false;
                 }
             }
         }
+
+        System.out.println("Could not connect after all retry attempts.");
+        return false;
     }
 
     /**
@@ -127,17 +134,23 @@ public class App
 
     public static void main(String[] args)
     {
-        // Create new Application
         App a = new App();
 
-        // Connect to database
-        a.connect();
-        // Get Employee
-        Employee emp = a.getEmployee(255530);
-        // Display results
-        a.displayEmployee(emp);
-
-        // Disconnect from database
-        a.disconnect();
+        if (a.connect())
+        {
+            try
+            {
+                Employee emp = a.getEmployee(255530);
+                a.displayEmployee(emp);
+            }
+            finally
+            {
+                a.disconnect();
+            }
+        }
+        else
+        {
+            System.out.println("Application stopped: database connection failed.");
+        }
     }
 }
