@@ -2,6 +2,7 @@ package com.napier.sem;
 
 import java.sql.*;
 
+// This class connects us to the MySQL database
 public class App
 {
     /**
@@ -80,6 +81,7 @@ public class App
         }
     }
 
+    // Print out the employee details to console
     public void displayEmployee(Employee emp)
     {
         if (emp != null)
@@ -98,6 +100,7 @@ public class App
             System.out.println("Employee not found.");}
     }
 
+    // Retrieve employee's identifying details
     public Employee getEmployee(int ID)
     {
         try
@@ -132,6 +135,7 @@ public class App
         }
     }
 
+    // Starting point
     public static void main(String[] args)
     {
         App a = new App();
