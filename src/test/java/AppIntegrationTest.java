@@ -1,31 +1,46 @@
 package com.napier.sem;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AppIntegrationTest
-{
+public class AppIntegrationTest {
+
     static App app;
 
     @BeforeAll
-    static void init()
-    {
+    static void init() {
         app = new App();
-        app.connect("localhost:33060", 30000);
 
+        String host = System.getenv()
+                .getOrDefault("DB_HOST", "localhost:33060");
+
+        app.connect(host, 120000);
     }
 
     @Test
-    void testGetEmployee()
-    {
-        Employee emp = app.getEmployee(255530);
-        assertEquals(emp.emp_no, 255530);
-        assertEquals(emp.first_name, "Ronghao");
-        assertEquals(emp.last_name, "Garigliano");
+    void testGetCity() {
+        City city = app.getCity(1);
+
+        assertNotNull(city);
+        assertEquals(1, city.getId());
+        assertEquals("Kabul", city.getName());
+        assertEquals("AFG", city.getCountryCode());
+    }
+
+    @Test
+    void testCityNotFound() {
+        City city = app.getCity(-1);
+
+        assertNull(city);
+    }
+
+    @AfterAll
+    static void cleanup() {
+        if (app != null) {
+            app.disconnect();
+        }
     }
 }
