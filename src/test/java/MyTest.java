@@ -1,67 +1,41 @@
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+package com.napier.sem;
 
-// This code runs a bunch of meaningless tests to ensure unit tests work correctly.
-class MyTest
-{
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import  org.junit.jupiter.api.Assertions;
+
+import java.util.ArrayList;
+
+public class MyTest {
+    static App app;
+
+    @BeforeAll
+    static void init() {
+        app = new App();
+    }
+
+
     @Test
-    void unitTest()
-    {
-        assertEquals(5, 5);
+    void printCitiesTestEmpty() {
+        ArrayList<City> cities = new ArrayList<City>();
+        app.printCityReport(cities);
     }
 
     @Test
-    void unitTest3()
-    {
-        assertEquals(5, 5, "Messages are equal");
+    void printCitiesTestNormal() {
+        ArrayList<City> cities = new ArrayList<>();
+        City city = new City(458, "Glasgow", "GBR", "Scotland", 619680);
+        cities.add(city);
+        city = new City(459, "Liverpool", "GBR", "England", 461000);
+        cities.add(city);
+        city = new City(460, "Edinburgh", "GBR", "Scotland", 450180);
+        cities.add(city);
+        app.printCityReport(cities);
     }
 
     @Test
-    void unitTest4()
-    {
-        assertEquals(5.0, 5.01, 0.02);
-    }
-
-    @Test
-    void unitTest5()
-    {
-        int[] a = {1, 2, 3};
-        int[] b = {1, 2, 3};
-        assertArrayEquals(a, b);
-    }
-
-    @Test
-    void unitTest6()
-    {
-        assertTrue(5 == 5);
-    }
-
-    @Test
-    void unitTest7()
-    {
-        assertFalse(5 == 4);
-    }
-
-    @Test
-    void unitTest8()
-    {
-        assertNull(null);
-    }
-
-    @Test
-    void unitTest9()
-    {
-        assertNotNull("Hello");
-    }
-
-    @Test
-    void unitTest10()
-    {
-        assertThrows(NullPointerException.class, this::throwsException);
-    }
-
-    void throwsException() throws NullPointerException
-    {
-        throw new NullPointerException();
+    void getCityId() {
+        City city = new City(458, "Glasgow", "GBR", "Scotland", 619680);
+        Assertions.assertEquals(458, city.getId());
     }
 }
