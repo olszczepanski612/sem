@@ -27,7 +27,6 @@ public class City {
     this.id = id;
   }
 
-
   public String getName() {
     return name;
   }
@@ -35,7 +34,6 @@ public class City {
   public void setName(String name) {
     this.name = name;
   }
-
 
   public String getCountryCode() {
     return countryCode;
@@ -53,7 +51,6 @@ public class City {
   public void setDistrict(String district) {
     this.district = district;
   }
-
 
   public long getPopulation() {
     return population;
