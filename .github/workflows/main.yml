@@ -3,9 +3,6 @@ name: Java CI with MySQL Integration Tests
 
 on:
   push:
-    branches:
-      - master
-      - lab08
   pull_request:
 
 jobs:
