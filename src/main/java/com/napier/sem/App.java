@@ -8,6 +8,7 @@ public class App {
 
 	private Connection con = null;
 
+	// Starting point of the program
 	public static void main(String[] args) {
 		App app = new App();
 
@@ -29,6 +30,7 @@ public class App {
 		}
 	}
 
+	// Connect to database
 	public void connect(String location, int delay) {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -73,6 +75,7 @@ public class App {
 				"Could not connect to database", lastError);
 	}
 
+	// Get the details of a specific city using the id
 	public City getCity(int id) {
 		if (con == null) {
 			throw new IllegalStateException(
@@ -106,6 +109,7 @@ public class App {
 		return null;
 	}
 
+	// Disconnect from database
 	public void disconnect() {
 		if (con != null) {
 			try {
@@ -119,10 +123,12 @@ public class App {
 		}
 	}
 
+	// Print out a report on a city
 	public void printCityReport(City city) {
 		System.out.println(city);
 	}
 
+	// If argument is an array, print out a report on all the listed cities
 	public void printCityReport(ArrayList<City> cities) {
 		for (City city : cities) {
 			printCityReport(city);
