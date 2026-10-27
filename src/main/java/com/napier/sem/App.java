@@ -1,156 +1,137 @@
 package com.napier.sem;
 
 import java.sql.*;
+import java.util.ArrayList;
 
-public class App
-{
-    /**
-     * Connection to MySQL database.
-     */
-    private Connection con = null;
+// test
+public class App {
 
-    /**
-     * Connect to the MySQL database.
-     */
-    public boolean connect()
-    {
-        try
-        {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        }
-        catch (ClassNotFoundException e)
-        {
-            System.out.println("Could not load SQL driver");
-            return false;
-        }
+	private Connection con = null;
 
-        int retries = 60;
+	// Starting point of the program
+	public static void main(String[] args) {
+		App app = new App();
 
-        for (int i = 0; i < retries; i++)
-        {
-            System.out.println("Connecting to database...");
+		String location = args.length > 0
+				? args[0] : "localhost:33060";
 
-            try
-            {
-                con = DriverManager.getConnection(
-                        "jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false",
-                        "root",
-                        "example"
-                );
+		int delay = args.length > 1
+				? Integer.parseInt(args[1]) : 30000;
 
-                System.out.println("Successfully connected");
-                return true;
-            }
-            catch (SQLException e)
-            {
-                System.out.println("Database not ready: " + e.getMessage());
+		try {
+			app.connect(location, delay);
 
-                try
-                {
-                    Thread.sleep(2000);
-                }
-                catch (InterruptedException ie)
-                {
-                    Thread.currentThread().interrupt();
-                    return false;
-                }
-            }
-        }
+			City city = app.getCity(1);
+			if (city != null) {
+				app.printCityReport(city);
+			}
+		} finally {
+			app.disconnect();
+		}
+	}
 
-        System.out.println("Could not connect after all retry attempts.");
-        return false;
-    }
+	// Connect to database
+	public void connect(String location, int delay) {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException(
+					"Could not load MySQL driver", e);
+		}
 
-    /**
-     * Disconnect from the MySQL database.
-     */
-    public void disconnect()
-    {
-        if (con != null)
-        {
-            try
-            {
-                // Close connection
-                con.close();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Error closing connection to database");
-            }
-        }
-    }
+		String url = "jdbc:mysql://" + location
+				+ "/world?useSSL=false"
+				+ "&allowPublicKeyRetrieval=true";
 
-    public void displayEmployee(Employee emp)
-    {
-        if (emp != null)
-        {
-            System.out.println(
-                    emp.emp_no + " "
-                            + emp.first_name + " "
-                            + emp.last_name + "\n"
-                            + emp.title + "\n"
-                            + "Salary:" + emp.salary + "\n"
-                            + emp.dept_name + "\n"
-                            + "Manager: " + emp.manager + "\n");
-        }
-        else
-        {
-            System.out.println("Employee not found.");}
-    }
+		long deadline = System.currentTimeMillis() + delay;
+		SQLException lastError = null;
 
-    public Employee getEmployee(int ID)
-    {
-        try
-        {
-            // Create an SQL statement
-            Statement stmt = con.createStatement();
-            // Create string for SQL statement
-            String strSelect =
-                    "SELECT emp_no, first_name, last_name "
-                            + "FROM employees "
-                            + "WHERE emp_no = " + ID;
-            // Execute SQL statement
-            ResultSet rset = stmt.executeQuery(strSelect);
-            // Return new employee if valid.
-            // Check one is returned
-            if (rset.next())
-            {
-                Employee emp = new Employee();
-                emp.emp_no = rset.getInt("emp_no");
-                emp.first_name = rset.getString("first_name");
-                emp.last_name = rset.getString("last_name");
-                return emp;
-            }
-            else
-                return null;
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
-            System.out.println("Failed to get employee details");
-            return null;
-        }
-    }
+		do {
+			try {
+				System.out.println("Connecting to database...");
 
-    public static void main(String[] args)
-    {
-        App a = new App();
+				con = DriverManager.getConnection(
+						url, "root", "example");
 
-        if (a.connect())
-        {
-            try
-            {
-                Employee emp = a.getEmployee(255530);
-                a.displayEmployee(emp);
-            }
-            finally
-            {
-                a.disconnect();
-            }
-        }
-        else
-        {
-            System.out.println("Application stopped: database connection failed.");
-        }
-    }
+				System.out.println("Successfully connected");
+				return;
+
+			} catch (SQLException e) {
+				lastError = e;
+				System.out.println(
+						"Database not ready: " + e.getMessage());
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					throw new IllegalStateException(
+							"Connection interrupted", ie);
+				}
+			}
+		} while (System.currentTimeMillis() < deadline);
+
+		throw new IllegalStateException(
+				"Could not connect to database", lastError);
+	}
+
+	// Get the details of a specific city using the id
+	public City getCity(int id) {
+		if (con == null) {
+			throw new IllegalStateException(
+					"Database is not connected");
+		}
+
+		String sql = "SELECT * FROM city WHERE ID = ?";
+
+		try (PreparedStatement stmt =
+					 con.prepareStatement(sql)) {
+
+			stmt.setInt(1, id);
+
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return new City(
+							rs.getLong("ID"),
+							rs.getString("Name"),
+							rs.getString("CountryCode"),
+							rs.getString("District"),
+							rs.getLong("Population")
+					);
+				}
+			}
+
+		} catch (SQLException e) {
+			throw new IllegalStateException(
+					"Error retrieving city", e);
+		}
+
+		return null;
+	}
+
+	// Disconnect from database
+	public void disconnect() {
+		if (con != null) {
+			try {
+				con.close();
+				con = null;
+				System.out.println("Database disconnected");
+			} catch (SQLException e) {
+				throw new IllegalStateException(
+						"Error closing database", e);
+			}
+		}
+	}
+
+	// Print out a report on a city
+	public void printCityReport(City city) {
+		System.out.println(city);
+	}
+
+	// If argument is an array, print out a report on all the listed cities
+	public void printCityReport(ArrayList<City> cities) {
+		for (City city : cities) {
+			printCityReport(city);
+		}
+	}
 }

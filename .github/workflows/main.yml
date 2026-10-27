@@ -1,21 +1,98 @@
-name: A workflow for my Hello World App
-on: push
+
+name: Java CI with MySQL Integration Tests
+
+on:
+  push:
+  pull_request:
 
 jobs:
-  build:
-    name: Hello world action
+  UnitTests:
+    name: Unit Tests
     runs-on: ubuntu-22.04
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          submodules: recursive
+        uses: actions/checkout@v4
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Maven
-        run: mvn package
-      - name: Run docker compose
-        run: docker compose up --abort-on-container-exit
+
+      - name: Run Unit Tests
+        run: mvn -B -Dtest=MyTest verify
+
+      - name: Upload Unit Test Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/site/jacoco/jacoco.xml
+          flags: unit-tests
+          fail_ci_if_error: false
+          verbose: true
+
+  IntegrationTests:
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Start MySQL
+        run: docker compose up -d --build db
+
+      - name: Run Integration Tests
+        run: mvn -B -Dtest=AppIntegrationTest verify
+        env:
+          DB_HOST: localhost:33060
+
+      - name: Upload Integration Test Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/site/jacoco/jacoco.xml
+          flags: integration-tests
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Stop MySQL
+        if: always()
+        run: docker compose down
+
+  DockerBuild:
+    name: Docker Build
+    runs-on: ubuntu-22.04
+    needs: [UnitTests, IntegrationTests]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Package Application
+        run: mvn -B package -DskipTests
+
+      - name: Build Docker Images
+        run: docker compose build
+
+      - name: Start Application
+        run: |
+          docker compose up -d db
+          docker compose run --rm app
+
+      - name: Stop Containers
+        if: always()
+        run: docker compose down
