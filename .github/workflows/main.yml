@@ -1,9 +1,11 @@
-
 name: Java CI with MySQL Integration Tests
 
 on:
   push:
   pull_request:
+
+permissions:
+  contents: write
 
 jobs:
   UnitTests:
