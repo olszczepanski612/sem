@@ -1,44 +1,121 @@
+
 package com.napier.sem;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import  org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 
-public class MyTest {
-    static App app;
+import static org.junit.jupiter.api.Assertions.*;
 
-    // Initialise the app
-    @BeforeAll
-    static void init() {
-        app = new App();
+class MyTest {
+
+    @Test
+    void testCityConstructorAndGetters() {
+        City city = new City(
+                458, "Glasgow", "GBR",
+                "Scotland", 619680
+        );
+
+        assertEquals(458, city.getId());
+        assertEquals("Glasgow", city.getName());
+        assertEquals("GBR", city.getCountryCode());
+        assertEquals("Scotland", city.getDistrict());
+        assertEquals(619680, city.getPopulation());
     }
 
-    // Print out a list of cities
     @Test
-    void printCitiesTestEmpty() {
-        ArrayList<City> cities = new ArrayList<City>();
-        app.printCityReport(cities);
+    void testCitySetters() {
+        City city = new City(
+                1, "Test", "TST", "Test", 100
+        );
+
+        city.setId(2);
+        city.setName("Glasgow");
+        city.setCountryCode("GBR");
+        city.setDistrict("Scotland");
+        city.setPopulation(619680);
+
+        assertEquals(2, city.getId());
+        assertEquals("Glasgow", city.getName());
+        assertEquals("GBR", city.getCountryCode());
+        assertEquals("Scotland", city.getDistrict());
+        assertEquals(619680, city.getPopulation());
     }
 
-    // Print out a report on Glasgow, Liverpool and Edinburgh
     @Test
-    void printCitiesTestNormal() {
+    void testCityToString() {
+        City city = new City(
+                458, "Glasgow", "GBR",
+                "Scotland", 619680
+        );
+
+        String result = city.toString();
+
+        assertTrue(result.contains("Glasgow"));
+        assertTrue(result.contains("Scotland"));
+        assertTrue(result.contains("619680"));
+    }
+
+    @Test
+    void testPrintEmptyCityList() {
+        App app = new App();
+
         ArrayList<City> cities = new ArrayList<>();
-        City city = new City(458, "Glasgow", "GBR", "Scotland", 619680);
-        cities.add(city);
-        city = new City(459, "Liverpool", "GBR", "England", 461000);
-        cities.add(city);
-        city = new City(460, "Edinburgh", "GBR", "Scotland", 450180);
-        cities.add(city);
-        app.printCityReport(cities);
+
+        assertDoesNotThrow(
+                () -> app.printCityReport(cities)
+        );
     }
 
-    // Verify Glasgow details
     @Test
-    void getCityId() {
-        City city = new City(458, "Glasgow", "GBR", "Scotland", 619680);
-        Assertions.assertEquals(458, city.getId());
+    void testPrintCityList() {
+        App app = new App();
+
+        ArrayList<City> cities = new ArrayList<>();
+
+        cities.add(new City(
+                458, "Glasgow", "GBR",
+                "Scotland", 619680
+        ));
+
+        cities.add(new City(
+                459, "Liverpool", "GBR",
+                "England", 461000
+        ));
+
+        assertDoesNotThrow(
+                () -> app.printCityReport(cities)
+        );
+    }
+
+    @Test
+    void testPrintSingleCity() {
+        App app = new App();
+
+        City city = new City(
+                458, "Glasgow", "GBR",
+                "Scotland", 619680
+        );
+
+        assertDoesNotThrow(
+                () -> app.printCityReport(city)
+        );
+    }
+
+    @Test
+    void testGetCityWithoutConnection() {
+        App app = new App();
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> app.getCity(1)
+        );
+    }
+
+    @Test
+    void testDisconnectWithoutConnection() {
+        App app = new App();
+
+        assertDoesNotThrow(app::disconnect);
     }
 }
