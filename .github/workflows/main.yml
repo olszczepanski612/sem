@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Unit Tests
-        run: mvn -B -Dtest=MyTest verify
+        run: mvn -B -Dtest=MyTest,AppUnitTest verify
 
       - name: Upload Unit Test Coverage
         uses: codecov/codecov-action@v5
